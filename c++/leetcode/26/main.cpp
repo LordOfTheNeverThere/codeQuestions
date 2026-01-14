@@ -1,5 +1,4 @@
 #include <iostream>
-#include <unordered_set>
 #include <vector>
 
 using Int = int32_t;
@@ -7,30 +6,18 @@ using Int = int32_t;
 class Solution {
 public:
     static Int removeDuplicates(std::vector<Int>& nums) {
-        std::unordered_set<Int> seenNums;
-        Int& firstNonUnique {nums[0]};
-        Int firstNonUniqueIndex = static_cast<Int>(nums.size());
 
-        for (Int k = 0; k < nums.size(); k++) {
+        Int uniqueIndex {0};
+        for (const Int& num: nums) {
 
-            if (&nums[k] == &nums[firstNonUniqueIndex]) {
-                return k;
-            }
-
-            auto numInSet = seenNums.find(nums[k]);
-            if (numInSet != seenNums.end()) {
-
-                firstNonUniqueIndex--;
-                std::swap(nums[k], nums[firstNonUniqueIndex]);
-
-            } else {
-                seenNums.insert(nums[k]);
+            if (num > nums[uniqueIndex]) {
+                uniqueIndex++;
+                nums[uniqueIndex] = num;
             }
         }
-        return 0;
+        return uniqueIndex + 1;
     }
 };
-
 
 
 int main() {
