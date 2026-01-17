@@ -7,65 +7,15 @@ class Solution {
 public:
     static void rotate(std::vector<Int>& nums, Int k) {
 
-
-
         Int const size = static_cast<Int>(nums.size());
-        std::vector<Int> tempVector {};
+        std::vector<Int> tempVector (size);
 
-        while (k >= size) {
-            k = k - size;
+        for (int i = 0; i < size; ++i) {
+
+            tempVector[(i + k) % size] =  nums[i];
         }
 
-        if (k > size/2) {
-            for (int i = 0; i < k; ++i) {
-                tempVector.push_back(nums[i]);
-            }
-
-            for (int i = k; i < size; ++i) {
-                if ((i + k) >= size) {
-                    nums[i + k - size] = nums[i];
-                } else {
-                    nums[i + k] = nums[i];
-                }
-            }
-
-            for (int i = 0; i < k; ++i) {
-
-                if ((i + k) >= size) {
-                    nums[i + k - size] = tempVector[i];
-                }
-                else {
-                    nums[i + k] = tempVector[i];
-                }
-            }
-
-        } else {
-
-
-            for (int i = k; i < size; ++i) {
-                tempVector.push_back(nums[i]);
-            }
-
-            for (int i = 0; i < k; ++i) {
-                if ((i + k) >= size) {
-                    nums[i + k - size] = nums[i];
-                } else {
-                    nums[i + k] = nums[i];
-                }
-            }
-
-            for (int i = k; i < size; ++i) {
-                if (i + k >= size) {
-                    nums[i + k - size] = tempVector[i - k];
-                } else {
-                    nums[i + k] = tempVector[i - k];
-                }
-
-            }
-
-        }
-
-
+        nums = std::move(tempVector);
     }
 };
 
