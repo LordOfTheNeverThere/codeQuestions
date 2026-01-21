@@ -11,10 +11,7 @@ public:
 
         for (Int num: nums) {
             if (num == 0) {
-                if (currentSubArraySize != 0) {
-                    numOfSubArrays++;
-                } 
-                numOfSubArrays++;
+                numOfSubArrays = numOfSubArrays + 1 + currentSubArraySize;
                 currentSubArraySize++;
             }
             else {
@@ -24,6 +21,8 @@ public:
         return numOfSubArrays;
     }
 };
+
+
 int main() {
     std::cout << "Hello, World!" << std::endl;
     return 0;
