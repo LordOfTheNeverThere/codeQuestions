@@ -5,33 +5,24 @@ using Int = int32_t;
 
 class Solution {
 public:
-    bool static increasingTriplet(std::vector<int>& nums) {
-        Int initialIndex {0};
-        Int middleIndex {0};
-        Int ite {1};
-        if (nums.size() < 3) {
-            return false;
-        }
+    bool static increasingTriplet(std::vector<Int>& nums) {
 
-        while (initialIndex < nums.size() - 2) {
+        Int i {0};
+        Int j {-1};
 
-
-            if (ite == nums.size()) {
-                initialIndex++;
-                middleIndex = initialIndex;
-                ite = initialIndex + 1;
-            } else if ((middleIndex > initialIndex) && nums[middleIndex] < nums[ite]) {
-                return  true;
-            } else if (nums[initialIndex] < nums[ite])  {
-                middleIndex = ite;
-                ite++;
-            } else {
-                ite++;
+        for (Int ite {1}; ite < nums.size(); ite++) {
+            if (nums[ite] <= nums[i]) {
+                i = ite;
+            } else if (j == -1 || nums[ite] <= nums[j]) {
+                j = ite;
+            } else if (nums[i] < nums[j] && nums[j] < nums[ite]) {
+                return true;
             }
         }
-
         return false;
-   }
+
+    }
+
 };
 
 
