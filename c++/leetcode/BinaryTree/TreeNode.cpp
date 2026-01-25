@@ -55,12 +55,13 @@ public:
     }
 
     TreeNode* remove(Int value) {
-
         if (value == m_value) {
             if (m_left && m_right) { // Has both children
                 // in this case in order to not break the BST condition we must substitue this node with
                 // the one with the lesser value of the m_right subtree
-                m_value = m_right->findAndRemoveBSTMin()->getValue();
+                TreeNode* bstMINNode = m_right->findAndRemoveBSTMin();
+                m_value = bstMINNode->getValue();
+                return bstMINNode;
 
             } else if (m_left) { // Has Leftmost children
                 return m_left.get();
@@ -72,14 +73,14 @@ public:
                 return nullptr;
             }
         } else if (m_left && value < m_value) {
-            m_left->remove(value);
+            return m_left->remove(value);
         } else if (m_right && value > m_value) {
-            m_right->remove(value);
+            return m_right->remove(value);
         }
     }
 
     TreeNode* findAndRemoveBSTMin() {
-        if (!(m_left->getLeft())) {
+        if ((m_left->getLeft())) {
             return m_left->findAndRemoveBSTMin();
         } else {
             TreeNode* min = m_left.get();
