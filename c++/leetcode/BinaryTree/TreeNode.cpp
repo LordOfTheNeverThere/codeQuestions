@@ -54,7 +54,44 @@ public:
         }
     }
 
+    void lumberjack(TreeNode* nodeToCut, Int value) {
+        if (nodeToCut->getValue() == value) {
+            if ((nodeToCut->getLeft()) && (nodeToCut->getLeft())) { // Has both children
+                // in this case in order to not break the BST condition we must substitue this node with
+                // the one with the lesser value of the m_right subtree
+                //TODO: This
+            } else if (nodeToCut->getLeft()) { // Has Leftmost children
+                nodeToCut = nodeToCut->getLeft();
+            }
+            else if (nodeToCut->getRight()) { // Has Rightmost children
+                nodeToCut = nodeToCut->getRight();
+            }
+            else { // Has no children = Leaf node
+                nodeToCut = nullptr;
+            }
+        } else {
+            nodeToCut->remove(value);
+        }
+    }
+
+
     TreeNode* remove(Int value) {
+
+        TreeNode* nodeToCut {nullptr};
+
+        if (value < m_value) {
+            nodeToCut = m_left.get();
+
+        } else if (value > m_value) {
+            nodeToCut = m_right.get();
+        }
+
+        if (nodeToCut) {
+            lumberjack(nodeToCut, value);
+        }
+
+
+
         if (value == m_value) {
             if (m_left && m_right) { // Has both children
                 // in this case in order to not break the BST condition we must substitue this node with
