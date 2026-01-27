@@ -1,0 +1,163 @@
+Your BST implementation has several **serious correctness issues**, a few **memory‑safety bugs**, and some **design pitfalls** that will cause undefined behavior, memory leaks, or incorrect tree structure. Let’s walk through the most important ones so you can fix them confidently.
+
+---
+
+# 🌳 Major Problems in Your BST Implementation
+
+## ❌ 1. `setLeft` and `setRight` take a **TreeNode by value**
+```cpp
+void setLeft(TreeNode node) {
+    m_left = std::make_unique<TreeNode>(std::move(node));
+}
+```
+
+This **copies an entire subtree**, then moves it into a new node.
+This is almost never what you want.
+
+### Why it's a problem:
+- Passing by value forces a **deep copy** of the entire subtree.
+- Moving a `TreeNode` containing `unique_ptr` children leaves the original node in a **moved‑from but still destructible** state.
+- You lose the original pointer identity.
+
+### Fix:
+```cpp
+void setLeft(std::unique_ptr<TreeNode> node) {
+    m_left = std::move(node);
+}
+```
+
+Or simply remove these setters entirely — they are dangerous.
+
+---
+
+## ❌ 2. `findAndRemoveBSTMin()` dereferences `m_left` without checking it
+```cpp
+if ((m_left->getLeft())) {
+```
+
+If `m_left == nullptr`, this is **undefined behavior**.
+
+### Fix:
+```cpp
+if (!m_left) return nullptr;
+```
+
+---
+
+## ❌ 3. `findAndRemoveBSTMin()` corrupts ownership
+```cpp
+TreeNode* min = m_left.get();
+m_left.reset(m_left->getRight());
+return min;
+```
+
+This is a **major memory‑safety bug**.
+
+### Why:
+- `m_left.reset(m_left->getRight())` replaces the unique_ptr with a **raw pointer**.
+- That raw pointer is **not owned**, so it will be freed twice or leaked.
+- Returning a raw pointer to a node that is no longer owned is unsafe.
+
+### Correct approach:
+You must **extract** the unique_ptr, not the raw pointer.
+
+---
+
+## ❌ 4. `lumberjack()` does not modify the actual tree
+```cpp
+nodeToCut = nodeToCut->getLeft();
+```
+
+This only reassigns the **local pointer**, not the parent’s child pointer.
+
+The tree structure does **not change**.
+
+### Example:
+If you want to replace `m_left`, you must write:
+```cpp
+m_left = std::move(nodeToCut->m_left);
+```
+
+---
+
+## ❌ 5. `lumberjack()` has a typo in the “two children” check
+```cpp
+if ((nodeToCut->getLeft()) && (nodeToCut->getLeft()))
+```
+
+You check `getLeft()` twice.
+You meant:
+
+```cpp
+if (nodeToCut->getLeft() && nodeToCut->getRight())
+```
+
+---
+
+## ❌ 6. `remove()` does not return anything
+```cpp
+TreeNode* remove(Int value) {
+    ...
+}
+```
+
+This function has **no return statement**, which is undefined behavior.
+
+---
+
+## ❌ 7. `remove()` does not update parent pointers
+You do:
+
+```cpp
+nodeToCut = m_left.get();
+lumberjack(nodeToCut, value);
+```
+
+But you never update `m_left` or `m_right` after deletion.
+
+So the tree never changes.
+
+---
+
+## ❌ 8. No handling of deleting the root node
+If you call:
+
+```cpp
+root.remove(rootValue);
+```
+
+The root cannot be replaced because you never return a new root.
+
+---
+
+# 🌱 Summary of Critical Issues
+
+| Category | Severity | Description |
+|---------|----------|-------------|
+| Memory safety | 🔥 Critical | Resetting unique_ptr with raw pointer, dereferencing null |
+| Logic | 🔥 Critical | Removal does not modify tree structure |
+| API design | ⚠️ Major | Passing TreeNode by value, unsafe setters |
+| Correctness | ⚠️ Major | Wrong two‑child check, missing return |
+| BST behavior | ⚠️ Major | Root cannot be deleted |
+
+---
+
+# 🌳 What I Recommend
+
+If you want a clean, safe, modern C++ BST:
+
+- Use `std::unique_ptr<TreeNode>` everywhere.
+- Write `remove()` so it returns a `std::unique_ptr<TreeNode>`.
+- Avoid raw pointers except for read‑only traversal.
+- Never pass `TreeNode` by value.
+- Use helper functions that operate on `std::unique_ptr<TreeNode>&`.
+
+If you want, I can rewrite your entire BST implementation into a **correct, modern, memory‑safe version** using unique_ptr, including:
+
+- insert
+- find
+- remove
+- traversal
+- destructor safety
+
+Just say the word and I’ll craft a clean, robust implementation for you.

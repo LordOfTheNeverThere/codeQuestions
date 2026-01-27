@@ -16,13 +16,6 @@ public:
     TreeNode* getLeft() const { return m_left.get();}
     TreeNode* getRight() const { return m_right.get();}
 
-    void setLeft(TreeNode node) {
-        m_left = std::make_unique<TreeNode>(std::move(node));
-    }
-    void setRight(TreeNode node) {
-        m_right = std::make_unique<TreeNode>(std::move(node));
-    }
-
     void insert(Int value) {
 
         if (value < m_value) {
@@ -54,19 +47,21 @@ public:
         }
     }
 
-    TreeNode* findAndRemoveBSTMin() {
-        if ((m_left->getLeft())) {
+    Int findAndRemoveBSTMin() {
+        if (!m_left) {
+            return this->getValue();
+        } else if ((m_left->getLeft())) {
             return m_left->findAndRemoveBSTMin();
         } else {
-            TreeNode* min = m_left.get();
-            m_left.reset(m_left->getRight());
+            const Int min = m_left->getValue();
+            m_left = std::move(m_left->m_right);
             return min;
         }
     }
 
     void lumberjack(TreeNode* nodeToCut, Int value) {
         if (nodeToCut->getValue() == value) {
-            if ((nodeToCut->getLeft()) && (nodeToCut->getLeft())) { // Has both children
+            if ((nodeToCut->getLeft()) && (nodeToCut->getRight())) { // Has both children
                 // in this case in order to not break the BST condition we must substitue this node with
                 // the one with the lesser value of the m_right subtree
                 nodeToCut->m_value = nodeToCut->getRight()->findAndRemoveBSTMin()->getValue();
