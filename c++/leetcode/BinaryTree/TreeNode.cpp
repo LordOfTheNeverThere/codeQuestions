@@ -64,7 +64,7 @@ public:
             if ((nodeToCut->getLeft()) && (nodeToCut->getRight())) { // Has both children
                 // in this case in order to not break the BST condition we must substitue this node with
                 // the one with the lesser value of the m_right subtree
-                nodeToCut->m_value = nodeToCut->getRight()->findAndRemoveBSTMin()->getValue();
+                nodeToCut->m_value = nodeToCut->getRight()->findAndRemoveBSTMin();
             } else if (nodeToCut->getLeft()) { // Has Leftmost children
                 nodeToCut = nodeToCut->getLeft();
             }
