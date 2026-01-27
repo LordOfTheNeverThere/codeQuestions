@@ -54,12 +54,22 @@ public:
         }
     }
 
+    TreeNode* findAndRemoveBSTMin() {
+        if ((m_left->getLeft())) {
+            return m_left->findAndRemoveBSTMin();
+        } else {
+            TreeNode* min = m_left.get();
+            m_left.reset(m_left->getRight());
+            return min;
+        }
+    }
+
     void lumberjack(TreeNode* nodeToCut, Int value) {
         if (nodeToCut->getValue() == value) {
             if ((nodeToCut->getLeft()) && (nodeToCut->getLeft())) { // Has both children
                 // in this case in order to not break the BST condition we must substitue this node with
                 // the one with the lesser value of the m_right subtree
-                //TODO: This
+                nodeToCut->m_value = nodeToCut->getRight()->findAndRemoveBSTMin()->getValue();
             } else if (nodeToCut->getLeft()) { // Has Leftmost children
                 nodeToCut = nodeToCut->getLeft();
             }
@@ -73,7 +83,6 @@ public:
             nodeToCut->remove(value);
         }
     }
-
 
     TreeNode* remove(Int value) {
 
@@ -90,40 +99,6 @@ public:
             lumberjack(nodeToCut, value);
         }
 
-
-
-        if (value == m_value) {
-            if (m_left && m_right) { // Has both children
-                // in this case in order to not break the BST condition we must substitue this node with
-                // the one with the lesser value of the m_right subtree
-                TreeNode* bstMINNode = m_right->findAndRemoveBSTMin();
-                m_value = bstMINNode->getValue();
-                return bstMINNode;
-
-            } else if (m_left) { // Has Leftmost children
-                return m_left.get();
-            }
-            else if (m_right) { // Has Rightmost children
-                return m_right.get();
-            }
-            else { // Has no children = Leaf node
-                return nullptr;
-            }
-        } else if (m_left && value < m_value) {
-            return m_left->remove(value);
-        } else if (m_right && value > m_value) {
-            return m_right->remove(value);
-        }
-    }
-
-    TreeNode* findAndRemoveBSTMin() {
-        if ((m_left->getLeft())) {
-            return m_left->findAndRemoveBSTMin();
-        } else {
-            TreeNode* min = m_left.get();
-            m_left.reset(m_left->getRight());
-            return min;
-        }
     }
 };
 
