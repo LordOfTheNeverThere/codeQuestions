@@ -36,7 +36,7 @@ public:
         if (!m_root) {
             return;
         } else if (m_root->getValue() == value) {
-            m_root->lumberjack(m_root, value);
+            TreeNode::lumberjack(m_root, value);
         } else {
             m_root->remove(value);
         }
