@@ -7,6 +7,7 @@ using Int = int32_t;
 
 
 class SortedNode {
+    
 public:
     Int m_val {0};
     std::unique_ptr<SortedNode> m_next {nullptr};
